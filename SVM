@@ -1,0 +1,67 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+import matplotlib.pyplot as plt
+
+# Load the data from csv file into a pandas dataframe
+df = pd.read_csv("/kaggle/input/email-spam-classification-dataset-csv/emails.csv")
+
+# Remove the first column (Email name) as it is not relevant for the prediction
+df = df.drop(columns=['Email No.'])
+
+# Replace non-numeric characters with NaN values
+df = df.replace(r'[^\d.]+', value=float('nan'), regex=True)
+
+# Fill missing values with 0
+df.fillna(0, inplace=True)
+
+# Convert the data into integer type
+df = df.astype(int)
+df
+
+
+# Split the data into features (X) and labels (y)
+X = df.iloc[:, :-1].values
+y = df.iloc[:, -1].values
+
+
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+
+
+# Define a dictionary to store the results of each model
+results = {}
+
+
+# Train SVM model
+model_SVM = SVC()
+model_SVM.fit(X_train, y_train)
+
+# Predict the target values for test set
+y_pred_SVM = model_SVM.predict(X_test)
+
+# Evaluate the SVM model
+accuracy_SVM = accuracy_score(y_test, y_pred_SVM)
+precision_SVM = precision_score(y_test, y_pred_SVM)
+recall_SVM = recall_score(y_test, y_pred_SVM)
+f1_SVM = f1_score(y_test, y_pred_SVM)
+
+# Store the results of SVM model in the dictionary
+results["SVM"] = {"accuracy": accuracy_SVM, 
+                  "precision": precision_SVM, 
+                  "recall": recall_SVM, 
+                  "f1_score": f1_SVM
+                 }
+
+
+results
